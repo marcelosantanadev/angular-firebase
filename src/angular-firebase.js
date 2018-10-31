@@ -130,71 +130,66 @@ provider('Firebase', [function () {
      * NgFirebase Class
      * @type {Class}
      */
-    var NgFirebase = function () {
-    };
-
-    NgFirebase.prototype.requestPermission = function () {
-      deferred = $q.defer();
-      if (!firebase.apps.length) {
-        firebase.initializeApp(options);
-      }
-      messaging = firebase.messaging();
-
-      messaging.requestPermission()
-        .then(function () {
-          deferred.resolve();
-          $rootScope.$apply();
-        }).catch(function (err) {
-        deferred.reject(err);
-      });
-
-
-      return deferred.promise;
-    };
-
-    NgFirebase.prototype.getToken = function () {
-      var deferred = $q.defer();
-
-      messaging.getToken()
-        .then(function (currentToken) {
-          if (currentToken) {
-            deferred.resolve(currentToken);
+    var NgFirebase = {
+      requestPermission() {
+        deferred = $q.defer();
+        if (!firebase.apps.length) {
+          firebase.initializeApp(options);
+        }
+        messaging = firebase.messaging();
+  
+        messaging.requestPermission()
+          .then(function () {
+            deferred.resolve();
             $rootScope.$apply();
-          } else {
-            deferred.reject('No Instance ID token available. Request permission to generate one.');
-          }
-        })
-        .catch(function (err) {
-          deferred.reject('An error occurred while retrieving token. ' + err);
-        });
-
-      return deferred.promise;
+          }).catch(function (err) {
+          deferred.reject(err);
+        });   
+        return deferred.promise;
+      },
+      getToken() {
+        var deferred = $q.defer();
+  
+        messaging.getToken()
+          .then(function (currentToken) {
+            if (currentToken) {
+              deferred.resolve(currentToken);
+              $rootScope.$apply();
+            } else {
+              deferred.reject('No Instance ID token available. Request permission to generate one.');
+            }
+          })
+          .catch(function (err) {
+            deferred.reject('An error occurred while retrieving token. ' + err);
+          });
+  
+        return deferred.promise;
+      },
+      getMessaging(){
+        return messaging;
+      },
+      deleteToken(){
+        var deferred = $q.defer();
+  
+        messaging.getToken()
+          .then(function (currentToken) {
+            messaging.deleteToken(currentToken)
+              .then(function () {
+                deferred.resolve();
+              })
+              .catch(function (err) {
+                deferred.reject('Unable to delete token. ' + err);
+              });
+          })
+          .catch(function (err) {
+            deferred.reject('An error occurred while retrieving token. ' + err);
+          });
+  
+        return deferred.promise;
+      }
     };
-    NgFirebase.prototype.getMessaging = function () {
-      return messaging;
-    };
-    NgFirebase.prototype.deleteToken = function () {
-      var deferred = $q.defer();
 
-      messaging.getToken()
-        .then(function (currentToken) {
-          messaging.deleteToken(currentToken)
-            .then(function () {
-              deferred.resolve();
-            })
-            .catch(function (err) {
-              deferred.reject('Unable to delete token. ' + err);
-            });
-        })
-        .catch(function (err) {
-          deferred.reject('An error occurred while retrieving token. ' + err);
-        });
-
-      return deferred.promise;
-    };
-
-
-    return new NgFirebase();
+    return NgFirebase;
   }];
 }])
 
@@ -203,7 +198,7 @@ provider('Firebase', [function () {
     var po = document.createElement('script');
     po.type = 'text/javascript';
     po.async = true;
-    po.src = 'https://www.gstatic.com/firebasejs/4.6.2/firebase.js';
+    po.src = 'https://www.gstatic.com/firebasejs/5.5.2/firebase.js';
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(po, s);
   }]);
