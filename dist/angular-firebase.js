@@ -1,4 +1,4 @@
-/*! angular-firebase - v0.1.3 2017-12-03 */
+/*! angular-firebase - v0.1.3 2018-11-01 */
 /**
  * googleplus module
  */
@@ -101,58 +101,59 @@ angular.module("firebase", []).provider("Firebase", [ function() {
      * NgFirebase Class
      * @type {Class}
      */
-        var g = function() {};
-        g.prototype.requestPermission = function() {
-            f = c.defer();
-            if (!firebase.apps.length) {
-                firebase.initializeApp(a);
-            }
-            b = firebase.messaging();
-            b.requestPermission().then(function() {
-                f.resolve();
-                d.$apply();
-            }).catch(function(a) {
-                f.reject(a);
-            });
-            return f.promise;
-        };
-        g.prototype.getToken = function() {
-            var a = c.defer();
-            b.getToken().then(function(b) {
-                if (b) {
-                    a.resolve(b);
-                    d.$apply();
-                } else {
-                    a.reject("No Instance ID token available. Request permission to generate one.");
+        var g = {
+            requestPermission: function() {
+                f = c.defer();
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(a);
                 }
-            }).catch(function(b) {
-                a.reject("An error occurred while retrieving token. " + b);
-            });
-            return a.promise;
-        };
-        g.prototype.getMessaging = function() {
-            return b;
-        };
-        g.prototype.deleteToken = function() {
-            var a = c.defer();
-            b.getToken().then(function(c) {
-                b.deleteToken(c).then(function() {
-                    a.resolve();
-                }).catch(function(b) {
-                    a.reject("Unable to delete token. " + b);
+                b = firebase.messaging();
+                b.requestPermission().then(function() {
+                    f.resolve();
+                    d.$apply();
+                }).catch(function(a) {
+                    f.reject(a);
                 });
-            }).catch(function(b) {
-                a.reject("An error occurred while retrieving token. " + b);
-            });
-            return a.promise;
+                return f.promise;
+            },
+            getToken: function() {
+                var a = c.defer();
+                b.getToken().then(function(b) {
+                    if (b) {
+                        a.resolve(b);
+                        d.$apply();
+                    } else {
+                        a.reject("No Instance ID token available. Request permission to generate one.");
+                    }
+                }).catch(function(b) {
+                    a.reject("An error occurred while retrieving token. " + b);
+                });
+                return a.promise;
+            },
+            getMessaging: function() {
+                return b;
+            },
+            deleteToken: function() {
+                var a = c.defer();
+                b.getToken().then(function(c) {
+                    b.deleteToken(c).then(function() {
+                        a.resolve();
+                    }).catch(function(b) {
+                        a.reject("Unable to delete token. " + b);
+                    });
+                }).catch(function(b) {
+                    a.reject("An error occurred while retrieving token. " + b);
+                });
+                return a.promise;
+            }
         };
-        return new g();
+        return g;
     } ];
 } ]).run([ function() {
     var a = document.createElement("script");
     a.type = "text/javascript";
     a.async = true;
-    a.src = "https://www.gstatic.com/firebasejs/4.6.2/firebase.js";
+    a.src = "https://www.gstatic.com/firebasejs/5.5.2/firebase.js";
     var b = document.getElementsByTagName("script")[0];
     b.parentNode.insertBefore(a, b);
 } ]);
