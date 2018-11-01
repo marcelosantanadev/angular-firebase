@@ -131,7 +131,7 @@ provider('Firebase', [function () {
      * @type {Class}
      */
     var NgFirebase = {
-      requestPermission() {
+      requestPermission : function() {
         deferred = $q.defer();
         if (!firebase.apps.length) {
           firebase.initializeApp(options);
@@ -147,7 +147,7 @@ provider('Firebase', [function () {
         });   
         return deferred.promise;
       },
-      getToken() {
+      getToken : function() {
         var deferred = $q.defer();
   
         messaging.getToken()
@@ -165,10 +165,10 @@ provider('Firebase', [function () {
   
         return deferred.promise;
       },
-      getMessaging(){
+      getMessaging: function(){
         return messaging;
       },
-      deleteToken(){
+      deleteToken: function(){
         var deferred = $q.defer();
   
         messaging.getToken()
